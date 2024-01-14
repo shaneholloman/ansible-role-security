@@ -1,17 +1,17 @@
 ---
 - name: Ensure SSH daemon is running.
-  service:
+  ansible.builtin.service:
     name: "{{ security_sshd_name }}"
     state: "{{ security_sshd_state }}"
 
 - name: Update SSH configuration to be more secure.
-  lineinfile:
+  ansible.builtin.lineinfile:
     dest: "{{ security_ssh_config_path }}"
     regexp: "{{ item.regexp }}"
     line: "{{ item.line }}"
     state: present
     validate: 'sshd -T -f %s'
-    mode: 0644
+    mode: '0644'
   with_items:
     - regexp: "^PasswordAuthentication"
       line: "PasswordAuthentication {{ security_ssh_password_authentication }}"
@@ -29,50 +29,50 @@
       line: "GSSAPIAuthentication {{ security_ssh_gss_api_authentication }}"
     - regexp: "^X11Forwarding"
       line: "X11Forwarding {{ security_ssh_x11_forwarding }}"
-  notify: restart ssh
+  notify: Restart ssh
 
 - name: Add configured users allowed to connect over ssh
-  lineinfile:
+  ansible.builtin.lineinfile:
     dest: "{{ security_ssh_config_path }}"
     regexp: '^AllowUsers'
     line: "AllowUsers {{ security_ssh_allowed_users | join(' ') }}"
     state: present
     create: true
     validate: 'sshd -T -f %s'
-    mode: 0644
+    mode: '0644'
   when: security_ssh_allowed_users | length > 0
-  notify: restart ssh
+  notify: Restart ssh
 
 - name: Add configured groups allowed to connect over ssh
-  lineinfile:
+  ansible.builtin.lineinfile:
     dest: "{{ security_ssh_config_path }}"
     regexp: '^AllowGroups'
     line: "AllowGroups {{ security_ssh_allowed_groups | join(' ') }}"
     state: present
     create: true
     validate: 'sshd -T -f %s'
-    mode: 0644
+    mode: '0644'
   when: security_ssh_allowed_groups | length > 0
-  notify: restart ssh
+  notify: Restart ssh
 
 - name: Add configured user accounts to passwordless sudoers.
-  lineinfile:
+  ansible.builtin.lineinfile:
     dest: /etc/sudoers
     regexp: '^{{ item }}'
     line: '{{ item }} ALL=(ALL) NOPASSWD: ALL'
     state: present
     validate: 'visudo -cf %s'
-    mode: 0440
+    mode: '0440'
   with_items: "{{ security_sudoers_passwordless }}"
   when: security_sudoers_passwordless | length > 0
 
 - name: Add configured user accounts to passworded sudoers.
-  lineinfile:
+  ansible.builtin.lineinfile:
     dest: /etc/sudoers
     regexp: '^{{ item }}'
     line: '{{ item }} ALL=(ALL) ALL'
     state: present
     validate: 'visudo -cf %s'
-    mode: 0440
+    mode: '0440'
   with_items: "{{ security_sudoers_passworded }}"
   when: security_sudoers_passworded | length > 0

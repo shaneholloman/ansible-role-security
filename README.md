@@ -63,7 +63,7 @@ The state of the SSH daemon. Typically this should remain `started`.
 
     security_ssh_restart_handler_state: restarted
 
-The state of the `restart ssh` handler. Typically this should remain `restarted`.
+The state of the `Restart ssh` handler. Typically this should remain `restarted`.
 
     security_sudoers_passwordless: []
     security_sudoers_passworded: []

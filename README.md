@@ -1,6 +1,8 @@
-# Ansible Role: Security (Basics)
+# Ansible Role: `security`
 
 [![CI](https://github.com/shaneholloman/ansible-role-security/actions/workflows/ci.yml/badge.svg)](https://github.com/shaneholloman/ansible-role-security/actions/workflows/ci.yml)
+
+Bare Bone Basics Only!
 
 **First, a major, MAJOR caveat**: the security of your servers is YOUR responsibility. If you think simply including this role and adding a firewall makes a server secure, then you're mistaken. Read up on Linux, network, and application security, and know that no matter how much you know, you can always make every part of your stack more secure.
 
@@ -30,72 +32,100 @@ No special requirements for Debian/Ubuntu systems.
 
 Available variables are listed below, along with default values (see `defaults/main.yml`):
 
-    security_ssh_port: 22
+```yml
+security_ssh_port: 22
+```
 
 The port through which you'd like SSH to be accessible. The default is port 22, but if you're operating a server on the open internet, and have no firewall blocking access to port 22, you'll quickly find that thousands of login attempts per day are not uncommon. You can change the port to a nonstandard port (e.g. 2849) if you want to avoid these thousands of automated penetration attempts.
 
-    security_ssh_password_authentication: "no"
-    security_ssh_permit_root_login: "no"
-    security_ssh_usedns: "no"
-    security_ssh_permit_empty_password: "no"
-    security_ssh_challenge_response_auth: "no"
-    security_ssh_gss_api_authentication: "no"
-    security_ssh_x11_forwarding: "no"
+```yml
+security_ssh_password_authentication: "no"
+security_ssh_permit_root_login: "no"
+security_ssh_usedns: "no"
+security_ssh_permit_empty_password: "no"
+security_ssh_challenge_response_auth: "no"
+security_ssh_gss_api_authentication: "no"
+security_ssh_x11_forwarding: "no"
+```
 
 Security settings for SSH authentication. It's best to leave these set to `"no"`, but there are times (especially during initial server configuration or when you don't have key-based authentication in place) when one or all may be safely set to `'yes'`. **NOTE: It is _very_ important that you quote the 'yes' or 'no' values. Failure to do so may lock you out of your server.**
 
-    security_ssh_allowed_users: []
-    # - alice
-    # - bob
-    # - charlie
+```yml
+security_ssh_allowed_users: []
+# - alice
+# - bob
+# - charlie
+```
 
 A list of users allowed to connect to the host over SSH.  If no user is defined in the list, the task will be skipped.
 
-    security_ssh_allowed_groups: []
-    # - admins
-    # - devs
+```yml
+security_ssh_allowed_groups: []
+# - admins
+# - devs
+```
 
 A list of groups allowed to connect to the host over SSH.  If no group is defined in the list, the task will be skipped.
 
-    security_sshd_state: started
+```yml
+security_sshd_state: started
+```
 
 The state of the SSH daemon. Typically this should remain `started`.
 
-    security_ssh_restart_handler_state: restarted
+```yml
+security_ssh_restart_handler_state: restarted
+```
 
 The state of the `Restart ssh` handler. Typically this should remain `restarted`.
 
-    security_sudoers_passwordless: []
-    security_sudoers_passworded: []
+```yml
+security_sudoers_passwordless: []
+security_sudoers_passworded: []
+```
 
 A list of users who should be added to the sudoers file so they can run any command as root (via `sudo`) either without a password or requiring a password for each command, respectively.
 
-    security_autoupdate_enabled: true
+```yml
+security_autoupdate_enabled: true
+```
 
 Whether to install/enable `yum-cron` (RedHat-based systems) or `unattended-upgrades` (Debian-based systems). System restarts will not happen automatically in any case, and automatic upgrades are no excuse for sloppy patch and package management, but automatic updates can be helpful as yet another security measure.
 
-    security_autoupdate_blacklist: []
+```yml
+security_autoupdate_blacklist: []
+```
 
 (Debian/Ubuntu only) A listing of packages that should not be automatically updated.
 
-    security_autoupdate_reboot: false
+```yml
+security_autoupdate_reboot: false
+```
 
 (Debian/Ubuntu only) Whether to reboot when needed during unattended upgrades.
 
-    security_autoupdate_reboot_time: "03:00"
+```yml
+security_autoupdate_reboot_time: "03:00"
+```
 
 (Debian/Ubuntu only) The time to trigger a reboot, when needed, if `security_autoupdate_reboot` is set to `true`. In 24h "hh:mm" clock format.
 
-    security_autoupdate_mail_to: ""
-    security_autoupdate_mail_on_error: true
+```yml
+security_autoupdate_mail_to: ""
+security_autoupdate_mail_on_error: true
+```
 
 (Debian/Ubuntu only) If `security_autoupdate_mail_to` is set to an non empty value, unattended upgrades will send an e-mail to that address when some error occurs. You may either set this to a full email: `ops@example.com` or to something like `root`, which will use `/etc/aliases` to route the message. If you set `security_autoupdate_mail_on_error` to `false` you'll get an email after every package install.
 
-    security_fail2ban_enabled: true
+```yml
+security_fail2ban_enabled: true
+```
 
 Whether to install/enable `fail2ban`. You might not want to use fail2ban if you're already using some other service for login and intrusion detection (e.g. [ConfigServer](http://configserver.com/cp/csf.html)).
 
-    security_fail2ban_custom_configuration_template: "jail.local.j2"
+```yml
+security_fail2ban_custom_configuration_template: "jail.local.j2"
+```
 
 The name of the template file used to generate `fail2ban`'s configuration.
 
@@ -105,21 +135,25 @@ None.
 
 ## Example Playbook
 
-    - hosts: servers
-      vars_files:
-        - vars/main.yml
-      roles:
-        - shaneholloman.security
+```yml
+- hosts: servers
+  vars_files:
+    - vars/main.yml
+  roles:
+    - shaneholloman.security
+```
 
 _Inside `vars/main.yml`_:
 
-    security_sudoers_passworded:
-      - johndoe
-      - deployacct
+```yml
+security_sudoers_passworded:
+  - johndoe
+  - deployacct
+```
 
 ## License
 
-MIT (Expat) / BSD
+Unlicense
 
 ## Author Information
 
